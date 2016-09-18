@@ -7,8 +7,11 @@
        (let [file "dev-resources/lazy_read.txt"]
          (lazy-read file) => ["hello" "you"]))
 
-(facts "About `lazy-write"
-       (let [file "dev-resources/lazy_write.txt"]
-         (do
-           (lazy-write file ["hello" "you"])
-           (slurp file))) => "hello\nyou\n")
+(let [file "dev-resources/lazy_write.txt"]
+  (against-background
+    [(after :checks (clojure.java.io/delete-file file))]
+
+    (facts "About `lazy-write"
+           (do
+             (lazy-write file ["hello" "you"])
+             (slurp file)) => "hello\nyou\n")))
