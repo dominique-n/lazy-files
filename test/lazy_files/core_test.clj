@@ -14,4 +14,4 @@
     (facts "About `lazy-write"
            (do
              (lazy-write file ["hello" "you"])
-             (slurp file)) => "hello\nyou\n")))
+             (doall (lazy-read file))) => ["hello" "you"])))
