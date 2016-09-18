@@ -1,9 +1,15 @@
 (ns lazy-files.core)
 
-;;; This is an incorrect implementation, such as might be written by
-;;; someone who was used to a Lisp in which an empty list is equal to
-;;; nil.
-(defn first-element [sequence default]
-  (if (nil? sequence)
-    default
-    (first sequence)))
+(defn lazy-read [file]
+  (letfn  [(helper  [rdr]
+             (lazy-seq
+               (if-let  [line  (.readLine rdr)]
+                 (cons line  (helper rdr))
+                 (do  (.close rdr) nil))))]
+    (helper  (clojure.java.io/reader file))))
+
+(defn lazy-write
+  ([file xs] (lazy-write file false xs))
+  ([file append xs]
+   (with-open [w  (clojure.java.io/writer file :append append)]
+     (doseq [x xs] (.write w (str x "\n"))))))
